@@ -16,7 +16,6 @@ namespace AVD2
             cassino = new Cassino(jogador);
             cassino.AdicionarJogo(new CacaNiquel());
             cassino.AdicionarJogo(new Roleta());
-
             AtualizarSaldo();
         }
 
@@ -37,35 +36,11 @@ namespace AVD2
 
         private void btnCacaNiquel_Click(object sender, EventArgs e)
         {
-            decimal valorAposta;
-            if (decimal.TryParse(txtValorAposta.Text, out valorAposta))
+            if (decimal.TryParse(txtValorAposta.Text, out decimal valorAposta))
             {
-                if (valorAposta > 0 && valorAposta <= jogador.Saldo)
-                {
-                    var jogo = new CacaNiquel();
-                    jogador.AtualizarSaldo(-valorAposta);
-                    jogo.Apostar(valorAposta);
-
-                    // Simulação de resultado
-                    Random rnd = new Random();
-                    bool venceu = rnd.Next(0, 2) == 1; // Ganha ou perde aleatoriamente
-
-                    if (venceu)
-                    {
-                        decimal premio = valorAposta * 2;
-                        jogador.AtualizarSaldo(premio);
-                        lstResultados.Items.Add($"Você ganhou {premio:C} no Caça-Níquel!");
-                    }
-                    else
-                    {
-                        lstResultados.Items.Add("Você perdeu no Caça-Níquel!");
-                    }
-                    AtualizarSaldo();
-                }
-                else
-                {
-                    MessageBox.Show("Aposta inválida! Verifique o saldo ou o valor da aposta.");
-                }
+                string resultado = cassino.ApostarNoCacaNiquel(valorAposta);
+                lstResultados.Items.Add(resultado);
+                AtualizarSaldo();
             }
             else
             {
@@ -98,54 +73,15 @@ namespace AVD2
 
         private void btnApostarRoleta_Click(object sender, EventArgs e)
         {
-            decimal valorAposta;
-            string tipoAposta = cmbTipoAposta.SelectedItem.ToString();
-            string escolhaCor = cmbEscolhaCor.SelectedItem?.ToString(); // ComboBox para cor
-            int numeroEscolhido = -1;
-
-            if (tipoAposta == "Numero" && !int.TryParse(txtNumeroEscolhido.Text, out numeroEscolhido))
+            if (decimal.TryParse(txtValorAposta.Text, out decimal valorAposta))
             {
-                MessageBox.Show("Por favor, insira um número válido para a aposta.");
-                return;
-            }
+                string tipoAposta = cmbTipoAposta.SelectedItem?.ToString();
+                string escolhaCor = cmbEscolhaCor.SelectedItem?.ToString();
+                int numeroEscolhido = int.TryParse(txtNumeroEscolhido.Text, out int n) ? n : -1;
 
-            if (decimal.TryParse(txtValorAposta.Text, out valorAposta))
-            {
-                if (valorAposta > 0 && valorAposta <= jogador.Saldo)
-                {
-                    // Cria uma nova instância de Roleta e define a aposta
-                    var jogo = new Roleta();
-                    jogo.DefinirAposta(tipoAposta, escolhaCor, numeroEscolhido);
-
-                    // Deduz o valor da aposta do saldo do jogador
-                    jogador.AtualizarSaldo(-valorAposta);
-
-                    // Realiza a aposta e captura o resultado
-                    bool ganhou = jogo.FazerAposta(valorAposta);
-                    string resultado;
-
-                    if (ganhou)
-                    {
-                        decimal premio = valorAposta * 1.5m; // Exemplo de multiplicador de prêmio
-                        jogador.AtualizarSaldo(premio); // Atualiza o saldo do jogador com o prêmio
-                        resultado = $"Ganhou {premio:C}";
-                    }
-                    else
-                    {
-                        resultado = "Perdeu";
-                    }
-
-                    // Adiciona o resultado da aposta à lstResultados
-                    string entrada = $"Aposta: {tipoAposta}, Valor: {valorAposta:C}, \n Resultado: {resultado}, Saldo: {jogador.Saldo:C}";
-                    lstResultados.Items.Add(entrada);
-
-                    // Atualiza o saldo exibido na interface
-                    AtualizarSaldo();
-                }
-                else
-                {
-                    MessageBox.Show("Aposta inválida! Verifique o saldo ou o valor da aposta.");
-                }
+                string resultado = cassino.ApostarNaRoleta(valorAposta, tipoAposta, escolhaCor, numeroEscolhido);
+                lstResultados.Items.Add(resultado);
+                AtualizarSaldo();
             }
             else
             {

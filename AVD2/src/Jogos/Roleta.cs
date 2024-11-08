@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AVD2.src.Jogos
 {
@@ -24,30 +20,34 @@ namespace AVD2.src.Jogos
             this.numeroEscolhido = numeroEscolhido;
         }
 
-        public bool FazerAposta(decimal valorAposta)
+        public override void Apostar(decimal valor)
         {
+            Console.WriteLine($"Apostando {valor} na Roleta...");
+        }
+
+        public string ExecutarAposta(decimal valorAposta, Jogador jogador)
+        {
+            if (!jogador.PodeApostar(valorAposta))
+                return "Saldo insuficiente para realizar a aposta.";
+
+            jogador.AtualizarSaldo(-valorAposta);
+
             int resultadoNumero = random.Next(0, 36);
             string resultadoCor = (resultadoNumero % 2 == 0) ? "Vermelho" : "Preto";
 
-            if (tipoAposta == "Numero")
+            bool ganhou = (tipoAposta == "Numero" && numeroEscolhido == resultadoNumero) ||
+                          (tipoAposta == "Cor" && escolhaCor == resultadoCor);
+
+            if (ganhou)
             {
- 
-                return numeroEscolhido == resultadoNumero;
+                decimal premio = valorAposta * 1.5m;
+                jogador.AtualizarSaldo(premio);
+                return $"Ganhou {premio:C}";
             }
-            else if (tipoAposta == "Cor")
+            else
             {
-
-                return escolhaCor == resultadoCor;
+                return "Perdeu";
             }
-
-
-            return false;
-        }
-
-        public override void Apostar(decimal valor)
-        {
-            throw new NotImplementedException();
         }
     }
-
 }

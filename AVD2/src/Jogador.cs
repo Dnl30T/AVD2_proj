@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AVD2.src
 {
@@ -17,10 +13,14 @@ namespace AVD2.src
             Saldo = saldoInicial;
         }
 
+        public bool PodeApostar(decimal valor)
+        {
+            return valor > 0 && valor <= Saldo;
+        }
+
         public void AtualizarSaldo(decimal valor)
         {
             Saldo += valor;
         }
     }
-
 }

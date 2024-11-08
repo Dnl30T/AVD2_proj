@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using AVD2.src.Jogos;
 
 namespace AVD2.src
 {
     public class Cassino
     {
-        private List<Jogo> jogos; // Associação com múltiplos jogos
-        public Jogador Jogador { get; private set; } // Relacionamento com jogador
+        private List<Jogo> jogos;
+        private Jogador jogador;
 
         public Cassino(Jogador jogador)
         {
-            Jogador = jogador;
+            this.jogador = jogador;
             jogos = new List<Jogo>();
         }
 
@@ -22,13 +19,17 @@ namespace AVD2.src
             jogos.Add(jogo);
         }
 
-        public void ListarJogos()
+        public string ApostarNoCacaNiquel(decimal valorAposta)
         {
-            foreach (var jogo in jogos)
-            {
-                Console.WriteLine(jogo.Nome);
-            }
+            var cacaNiquel = new CacaNiquel();
+            return cacaNiquel.ExecutarAposta(valorAposta, jogador);
+        }
+
+        public string ApostarNaRoleta(decimal valorAposta, string tipoAposta, string escolhaCor = null, int numeroEscolhido = -1)
+        {
+            var roleta = new Roleta();
+            roleta.DefinirAposta(tipoAposta, escolhaCor, numeroEscolhido);
+            return roleta.ExecutarAposta(valorAposta, jogador);
         }
     }
-
 }
